@@ -5,7 +5,7 @@ use std::{
 
 use base64::{engine::general_purpose, Engine};
 
-pub fn load_tiktoken(file: &str) -> Vec<Vec<u8>> {
+pub fn load_tiktoken(file: &str, special_tokens: &[u32]) -> Vec<Vec<u8>> {
     let f = File::open(file).unwrap();
     let reader = BufReader::new(f);
     let mut count = 0;
@@ -21,6 +21,10 @@ pub fn load_tiktoken(file: &str) -> Vec<Vec<u8>> {
         let id: u32 = id.parse().unwrap();
         assert_eq!(id, count);
         count += 1;
+        while special_tokens.contains(&count) {
+            pieces.push(vec![]);
+            count += 1;
+        }
     }
     pieces
 }
